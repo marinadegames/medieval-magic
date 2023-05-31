@@ -1,44 +1,37 @@
-import './global.scss';
-import { assetsMap } from './assetsMap';
-import type { BitmapFontLoadDescription, SpriteLoadDescription } from './descriptions';
-import { Playfield } from './objects/Playfield';
 import * as PIXI from 'pixi.js';
-import { Application } from 'pixi.js';
+import { Application, Assets } from 'pixi.js';
+import { assetsMap } from './assetsMap';
+import './global.scss';
+import { MatrixContainer } from './objects/MatrixContainer';
 
-export class Game {
-  private readonly game: PIXI.Application;
-
-  public playfield: Playfield;
+class App {
+  private readonly game: Application;
 
   constructor() {
-    this.game = new Application({
-      width: window.screenX,
-      height: window.screenY,
-      backgroundColor: 0x00c1ac,
-      antialias: true,
+    this.game = new PIXI.Application({
+      width: innerWidth,
+      height: innerHeight,
+      backgroundColor: 0x000000,
     });
-    document.body.appendChild(this.game.view);
+    document.body.appendChild(this.game.view as HTMLCanvasElement);
+
     this.loadAssets();
   }
 
   private loadAssets() {
-    assetsMap.sprites?.forEach((sprite: SpriteLoadDescription) => {
-      this.game.loader.add(sprite.name, sprite.url);
+    assetsMap.sequences?.forEach((seq) => {
+      Assets.load(seq.url).then((resources) => {
+        this.startGame(resources);
+      });
     });
-    assetsMap.sequences?.forEach((seq: SpriteLoadDescription) => {
-      this.game.loader.add(seq.name, seq.url);
-    });
-    assetsMap.bitMapFonts?.forEach((font: BitmapFontLoadDescription) => {
-      this.game.loader.add(font.name, font.url);
-    });
-    this.game.loader.load((loader, res) => this.startGame(loader, res));
-    this.game.renderer.resize(window.innerWidth, window.innerHeight);
   }
 
-  private startGame(loader, res) {
-    // start game logic
+  private startGame(resources: any) {
+    console.log('START GAME');
+    console.log(resources);
+
+    this.game.stage.addChild(new MatrixContainer(this.game, resources));
   }
 }
 
-// init
-new Game();
+new App();
