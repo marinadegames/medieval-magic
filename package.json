@@ -16,7 +16,7 @@
     "typescript"
   ],
   "dependencies": {
-    "@tweenjs/tween.js": "^20.0.3",
+    "gsap": "^3.11.5",
     "pixi.js": "^7.2.4"
   },
   "devDependencies": {

@@ -1,5 +1,7 @@
-import { Application, Container, DisplayObject, Sprite, Texture, Ticker } from 'pixi.js';
-import * as PIXI from 'pixi.js';
+import { Application, Container, DisplayObject, Sprite, Texture } from 'pixi.js';
+import { gsap } from 'gsap';
+import { PixiPlugin } from 'gsap/PixiPlugin.js';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin.js';
 
 export class MatrixContainer extends Container {
   private matrix: Array<Array<number>> = [[], [], [], [], []];
@@ -13,12 +15,10 @@ export class MatrixContainer extends Container {
     this.addChild(this.spriteMatrixContainer);
     this.initMatrix();
 
-    let value = 0;
-    let stepValue = 0.01;
+    game.ticker.stop();
 
-    game.ticker.add(() => {
-      value += stepValue;
-      console.log(Math.cos(value));
+    gsap.ticker.add(() => {
+      game.ticker.update();
     });
   }
 
@@ -38,9 +38,17 @@ export class MatrixContainer extends Container {
         targetIcon.scale.set(3, 3);
         targetIcon.interactive = true;
         targetIcon.cursor = 'pointer';
-        targetIcon.on('pointerenter', () => {});
+        targetIcon.on('pointerenter', () => {
+          gsap.to(targetIcon.scale, {
+            x: 3.2,
+            y: 3.2,
+          });
+        });
         targetIcon.on('pointerleave', () => {
-          targetIcon.scale.set(3, 3);
+          gsap.to(targetIcon.scale, {
+            x: 3,
+            y: 3,
+          });
         });
         targetIcon.anchor.set(0.5, 0.5);
         this.spriteMatrix[i].push(targetIcon);
